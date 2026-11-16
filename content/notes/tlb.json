@@ -1,0 +1,69 @@
+{
+  "slug": "tlb",
+  "title": "TLB：加速位址轉換",
+  "category": "記憶體",
+  "summary": "TLB miss 不等於 page fault；先搞懂快取的究竟是什麼。",
+  "minutes": 6,
+  "updated": "2026-11-16",
+  "objectives": [
+    "說出 TLB 與頁表的關係。",
+    "在簡化假設下計算平均存取時間。"
+  ],
+  "concepts": [
+    {
+      "term": "轉譯後備緩衝器（TLB）",
+      "explanation": "TLB 快取近期使用的虛擬頁號到實體頁框號等轉譯資訊，避免每次都走訪頁表。它不等同於快取一般資料的 data cache。"
+    },
+    {
+      "term": "命中與未命中（Hit / Miss）",
+      "explanation": "命中代表已有轉譯資訊；未命中時需要查頁表，但頁面仍可能已在實體記憶體。缺頁（page fault）與 TLB miss 是不同層次的事件。"
+    },
+    {
+      "term": "平均存取時間",
+      "explanation": "在循序查詢、單層頁表、無其他快取且沒有缺頁的教學模型中，命中花 t+m，未命中花 t+2m；平均為 h(t+m)+(1-h)(t+2m)。"
+    }
+  ],
+  "example": {
+    "question": "假設 TLB 查詢 t=10 ns，主記憶體存取 m=100 ns，命中率 h=90%；採上述簡化模型，求平均時間。",
+    "steps": [
+      "命中時：10 + 100 = 110 ns。",
+      "未命中時：10 + 100 + 100 = 210 ns。",
+      "加權：0.9 × 110 + 0.1 × 210 = 120 ns。"
+    ],
+    "answer": "平均存取時間 = 120 ns；真實機器還受多層頁表與其他快取影響。"
+  },
+  "mistakes": [
+    "TLB miss 不能直接寫成缺頁；應繼續確認頁表與頁面狀態。",
+    "不能把 90% 當作 90 代入公式，也不能省略題目規定的查詢成本。"
+  ],
+  "quiz": [
+    {
+      "question": "TLB 主要快取什麼？",
+      "options": [
+        "整個程式碼",
+        "位址轉譯資訊",
+        "磁碟完整內容",
+        "所有 CPU 指令結果"
+      ],
+      "answer": 1,
+      "explanation": "TLB 是位址轉譯資訊的快取，通常包含頁號、頁框號與權限資訊。"
+    },
+    {
+      "question": "發生 TLB miss，能確定什麼？",
+      "options": [
+        "一定要讀磁碟",
+        "程式一定非法",
+        "TLB 沒有本次所需的轉譯",
+        "實體記憶體一定滿了"
+      ],
+      "answer": 2,
+      "explanation": "未命中只代表 TLB 找不到本次轉譯；可能查頁表後就能繼續，不一定缺頁。"
+    }
+  ],
+  "sources": [
+    {
+      "label": "OSTEP 第 19 章：Paging: Faster Translations (TLBs)",
+      "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf"
+    }
+  ]
+}
